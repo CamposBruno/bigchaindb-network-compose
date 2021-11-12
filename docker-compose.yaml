@@ -1,0 +1,59 @@
+version: "3.9"  # optional since v1.27.0
+
+services:
+  bigchaindb-one:
+    container_name: bigchaindb-one
+    image: "bigchaindb/bigchaindb:all-in-one"
+    ports: 
+      - "10001:9984"
+      - "10002:9985"
+      - "10003:27017"
+      - "10004:26657"
+    volumes:
+      - ./bigchaindb_one/mongodb/data/db:/data/db 
+      - ./bigchaindb_one/mongodb/data/configdb:/data/configdb 
+      - ./bigchaindb_one/tendermint:/tendermint 
+    links:
+      - bigchaindb-two
+      - bigchaindb-three
+    networks:
+      - bigchaindb-network
+
+  bigchaindb-two:
+    container_name: bigchaindb-two
+    image: "bigchaindb/bigchaindb:all-in-one"
+    ports: 
+      - "20001:9984"
+      - "20002:9985"
+      - "20003:27017"
+      - "20004:26657"
+    volumes:
+      - ./bigchaindb_two/mongodb/data/db:/data/db 
+      - ./bigchaindb_two/mongodb/data/configdb:/data/configdb 
+      - ./bigchaindb_two/tendermint:/tendermint 
+    links:
+      - bigchaindb-three
+    networks:
+      - bigchaindb-network
+  
+  bigchaindb-three:
+    container_name: bigchaindb-three
+    image: "bigchaindb/bigchaindb:all-in-one"
+    ports: 
+      - "30001:9984"
+      - "30002:9985"
+      - "30003:27017"
+      - "30004:26657"
+    volumes:
+      - ./bigchaindb_three/mongodb/data/db:/data/db 
+      - ./bigchaindb_three/mongodb/data/configdb:/data/configdb 
+      - ./bigchaindb_three/tendermint:/tendermint
+
+    networks:
+      - bigchaindb-network
+      
+networks:
+  bigchaindb-network:
+    driver: bridge
+    ipam:
+      driver: default
